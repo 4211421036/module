@@ -10,74 +10,69 @@ on:
 jobs:
   Module:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-      with:
-        lfs: true
-    
-    - name: Setup Git LFS
-      run: |
-        git lfs install
-        echo "modules_storage/** filter=lfs diff=lfs merge=lfs -text" > .gitattributes
-        
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'
-    
-    - name: Install dependencies
-      run: |
-        # Initialize npm if package.json doesn't exist
-        if [ ! -f package.json ]; then
-          npm init -y
-        fi
-        
-        # Buat folder utama
-        mkdir -p modules_storage
-        
-        # Install module yang diinginkan
-        npm install @tensorflow/tfjs-node --save || true
-        npm install @angular/cli --save || true
-        npm install @polymer/polymer --save || true
-        
-        # Script untuk otomatis copy module berdasarkan scope
-        echo "Copying modules automatically..."
-        for dir in node_modules/@*/ ; do
-          if [ -d "$dir" ]; then
-            scope=$(basename $dir)
-            echo "Processing @$scope..."
-            mkdir -p "modules_storage/@$scope"
-            cp -r "$dir"* "modules_storage/@$scope/"
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          lfs: true
+
+      - name: Setup Git LFS
+        run: |
+          git lfs install
+          echo "modules_storage/** filter=lfs diff=lfs merge=lfs -text" > .gitattributes
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: |
+          # Initialize npm if package.json doesn't exist
+          if [ ! -f package.json ]; then
+            npm init -y
           fi
-        done
-        
-        # Copy module non-scoped jika ada
-        for dir in node_modules/[^@]*/ ; do
-          if [ -d "$dir" ]; then
-            module=$(basename $dir)
-            echo "Processing $module..."
-            mkdir -p "modules_storage/$module"
-            cp -r "$dir"* "modules_storage/$module/"
-          fi
-        done
-        
-    - name: Update package.json timestamp
-      run: |
-        CURRENT_DATE=$(date '+%Y-%m-%d')
-        jq --arg date "$CURRENT_DATE" '.lastUpdate = $date' package.json > temp.json && mv temp.json package.json
-        
-    - name: Configure Git
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        
-    - name: Commit and Push Changes
-      run: |
-        git add .gitattributes
-        git add modules_storage/
-        git add package.json
-        git add package-lock.json
-        git commit -m "Update modules - $(date +'%Y-%m-%d')" || true
-        git push origin main || true
+
+          # Install modules and ensure `node_modules` is created
+          npm install @tensorflow/tfjs-node @angular/cli @polymer/polymer --save
+
+          # Create `modules_storage` directory
+          mkdir -p modules_storage
+
+          # Copy scoped modules
+          for dir in node_modules/@*/ ; do
+            if [ -d "$dir" ]; then
+              scope=$(basename $dir)
+              mkdir -p "modules_storage/@$scope"
+              cp -r "$dir"* "modules_storage/@$scope/"
+            fi
+          done
+
+          # Copy non-scoped modules
+          for dir in node_modules/[^@]*/ ; do
+            if [ -d "$dir" ]; then
+              module=$(basename $dir)
+              mkdir -p "modules_storage/$module"
+              cp -r "$dir"* "modules_storage/$module/"
+            fi
+          done
+
+      - name: Update package.json timestamp
+        run: |
+          CURRENT_DATE=$(date '+%Y-%m-%d')
+          jq --arg date "$CURRENT_DATE" '.lastUpdate = $date' package.json > temp.json && mv temp.json package.json
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and Push Changes
+        run: |
+          git add .gitattributes
+          git add modules_storage/
+          git add package.json
+          git add package-lock.json
+          git commit -m "Update modules - $(date +'%Y-%m-%d')" || true
+          git push origin main || true
