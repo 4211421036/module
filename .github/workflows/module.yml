@@ -37,6 +37,11 @@ jobs:
           # Install modules and create node_modules
           npm install @tensorflow/tfjs-node @angular/cli @polymer/polymer react react-dom @emotion/react @emotion/styled framer-motion shadcn/ui tailwindcss postcss autoprefixer @webcomponents/custom-elements lit lucide-react chart.js express cors helmet compression mongoose sequelize redis firebase-admin jsonwebtoken bcryptjs passport passport-jwt socket.io vite webpack babel esbuild eslint prettier jest react-testing-library supertest mocha axios graphql dotenv --save --legacy-peer-deps
 
+      - name: Copy node_modules to modules_storage
+        run: |
+          mkdir -p modules_storage
+          cp -R node_modules/* modules_storage/
+
       - name: Update package.json timestamp
         run: |
           if ! command -v jq &> /dev/null; then
@@ -55,5 +60,6 @@ jobs:
           git add .gitattributes
           git add package.json
           git add package-lock.json
+          git add modules_storage/
           git commit -m "Update modules - $(date +'%Y-%m-%d')" || true
           git push origin main || true
