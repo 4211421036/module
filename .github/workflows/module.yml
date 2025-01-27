@@ -35,7 +35,7 @@ jobs:
           fi
 
           # Install modules and ensure `node_modules` is created
-          npm install @tensorflow/tfjs-node @angular/cli @polymer/polymer --save
+          npm install react react-dom @emotion/react @emotion/styled framer-motion shadcn/ui tailwindcss postcss autoprefixer @webcomponents/custom-elements lit lucide-react chart.js @tensorflow/tfjs-node @angular/cli @polymer/polymer --save
 
           # Create `modules_storage` directory
           mkdir -p modules_storage
@@ -44,8 +44,8 @@ jobs:
           for dir in node_modules/@*/ ; do
             if [ -d "$dir" ]; then
               scope=$(basename $dir)
-              mkdir -p "modules_storage/@$scope"
-              cp -r "$dir"* "modules_storage/@$scope/"
+              mkdir -p "modules_storage/$scope"
+              cp -r "$dir"* "modules_storage/$scope/"
             fi
           done
 
