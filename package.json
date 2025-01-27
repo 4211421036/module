@@ -1,0 +1,27 @@
+{
+  "name": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/4211421036/module.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/4211421036/module/issues"
+  },
+  "homepage": "https://github.com/4211421036/module#readme",
+  "dependencies": {
+    "@angular/cli": "^19.1.4",
+    "@angular/core": "^19.1.3",
+    "@polymer/polymer": "^3.5.2",
+    "@tensorflow/tfjs-node": "^4.22.0"
+  },
+  "lastUpdate": "2025-01-27"
+}
