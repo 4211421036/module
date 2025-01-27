@@ -20,6 +20,9 @@ jobs:
       with:
         node-version: '16'
     
+    - name: Remove .gitignore if exists
+      run: rm -f .gitignore
+    
     - name: Install dependencies
       run: |
         # Initialize npm if package.json doesn't exist
@@ -27,8 +30,8 @@ jobs:
           npm init -y
         fi
         
-        # Create directories
-        mkdir -p saved_modules
+        # Buat folder untuk menyimpan module
+        mkdir -p modules_storage
         
         # Install packages
         npm install @tensorflow/tfjs-node --save
@@ -36,9 +39,8 @@ jobs:
         npm install @angular/core --save
         npm install @polymer/polymer --save
         
-        # Copy to saved_modules
-        rm -rf saved_modules/*
-        cp -r node_modules/ saved_modules/
+        # Copy semua node_modules ke folder modules_storage
+        cp -r node_modules/* modules_storage/
         
     - name: Update package.json timestamp
       run: |
@@ -52,9 +54,9 @@ jobs:
         
     - name: Commit Changes
       run: |
-        git add saved_modules/
+        git add modules_storage/
         git add package.json
-        git add package-lock.json || true
+        git add package-lock.json
         git status
         
     - name: Create Commit
