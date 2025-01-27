@@ -35,7 +35,7 @@ jobs:
           fi
 
           # Install modules and ensure `node_modules` is created
-          npm install chart.js @tensorflow/tfjs-node @angular/cli @polymer/polymer --save
+          npm install chart.js @tensorflow/tfjs-node @angular/cli @polymer/polymer react react-dom shadcn/ui tailwindcss @webcomponents/custom-elements express cors helmet compression mongoose firebase-admin bcryptjs --save
 
           # Create `modules_storage` directory
           mkdir -p modules_storage
