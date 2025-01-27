@@ -2,7 +2,7 @@ name: Download dan Save Module
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Run setiap hari pada jam 00:00 UTC
+    - cron: '0 0 * * *'
   push:
     branches:
       - main
@@ -14,76 +14,54 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-    
+      
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '16'
         cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
     
-    - name: Create necessary directories
+    - name: Create necessary directories and initialize npm
       run: |
         mkdir -p saved_modules
+        npm init -y
         
-    - name: Install dependencies dan save module
+    - name: Install dependencies
       run: |
-        # Buat package.json jika belum ada
-        if [ ! -f package.json ]; then
-          npm init -y
-        fi
-        
         # Machine Learning Libraries
-        npm install @tensorflow/tfjs-node
+        npm install @tensorflow/tfjs-node --save
         
         # Frontend Frameworks
-        npm install @angular/cli                  # Angular CLI
-        npm install @angular/core                 # Angular Core
-        npm install @angular/common               # Angular Common
-        npm install @angular/router               # Angular Router
+        npm install @angular/cli --save
+        npm install @angular/core --save
+        npm install @angular/common --save
+        npm install @angular/router --save
         
         # Polymer
-        npm install polymer-cli                   # Polymer CLI
-        npm install @polymer/polymer              # Polymer Core
-        npm install @webcomponents/webcomponentsjs # Web Components polyfills
+        npm install polymer-cli --save
+        npm install @polymer/polymer --save
+        npm install @webcomponents/webcomponentsjs --save
         
-        # Vue.js
-        npm install vue
-        npm install @vue/cli
-        
-        # React
-        npm install react
-        npm install react-dom
-        npm install create-react-app
-        
-        # UI Libraries
-        npm install @material/material-components-web
-        npm install bootstrap
-        npm install tailwindcss
-        
-        # Utility Libraries
-        npm install lodash
-        npm install moment
-        npm install axios
-        
-        # Testing Libraries
-        npm install jest
-        npm install mocha
-        npm install cypress
-        
-        # Copy modules ke saved_modules
-        rm -rf saved_modules/*  # Bersihkan folder saved_modules
+        # Copy to saved_modules
+        rm -rf saved_modules/*
         cp -r node_modules/ saved_modules/
         
-    - name: Update package.json
+    - name: Generate package-lock.json
+      run: npm install
+        
+    - name: Update package.json timestamp
       run: |
         CURRENT_DATE=$(date '+%Y-%m-%d')
         jq --arg date "$CURRENT_DATE" '.lastUpdate = $date' package.json > temp.json && mv temp.json package.json
         
     - name: Commit dan Push changes
       run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git add saved_modules/
         git add package.json
-        git commit -m "Update modules - ${{ github.event.head_commit.timestamp }}"
-        git push
+        git add package-lock.json
+        git status
+        git commit -m "Update modules - $(date +'%Y-%m-%d')"
+        git push origin main
