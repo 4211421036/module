@@ -21,10 +21,11 @@ jobs:
         run: |
           git lfs install
           echo "modules_storage/** filter=lfs diff=lfs merge=lfs -text" > .gitattributes
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '16'
 
       - name: Install dependencies
         run: |
@@ -32,39 +33,41 @@ jobs:
           if [ ! -f package.json ]; then
             npm init -y
           fi
+
           # Install modules and ensure `node_modules` is created
           npm install @tensorflow/tfjs-node @angular/cli @polymer/polymer react react-dom @emotion/react @emotion/styled framer-motion shadcn/ui tailwindcss postcss autoprefixer @webcomponents/custom-elements lit lucide-react chart.js express cors helmet compression mongoose sequelize redis firebase-admin jsonwebtoken bcryptjs passport passport-jwt socket.io vite webpack babel esbuild eslint prettier jest react-testing-library supertest mocha axios graphql dotenv --save
-          # Create `node_module` directory
-          mkdir -p node_module
+
+          # Create `modules_storage` directory
+          mkdir -p modules_storage
+
           # Copy scoped modules
           for dir in node_modules/@*/ ; do
             if [ -d "$dir" ]; then
               scope=$(basename $dir)
-              mkdir -p "node_module/$scope"
-              cp -r "$dir"* "node_module/$scope/"
+              mkdir -p "modules_storage/@$scope"
+              cp -r "$dir"* "modules_storage/@$scope/"
             fi
           done
+
           # Copy non-scoped modules
           for dir in node_modules/[^@]*/ ; do
             if [ -d "$dir" ]; then
               module=$(basename $dir)
-              mkdir -p "node_module/$module"
-              cp -r "$dir"* "node_module/$module/"
+              mkdir -p "modules_storage/$module"
+              cp -r "$dir"* "modules_storage/$module/"
             fi
           done
-          # Install modules and create node_modules
-          npm install @tensorflow/tfjs-node @angular/cli @polymer/polymer react react-dom @emotion/react @emotion/styled framer-motion shadcn/ui tailwindcss postcss autoprefixer @webcomponents/custom-elements lit lucide-react chart.js express cors helmet compression mongoose sequelize redis firebase-admin jsonwebtoken bcryptjs passport passport-jwt socket.io vite webpack babel esbuild eslint prettier jest react-testing-library supertest mocha axios graphql dotenv --save --legacy-peer-deps
+
       - name: Update package.json timestamp
         run: |
-          if ! command -v jq &> /dev/null; then
-            sudo apt-get update && sudo apt-get install -y jq
-          fi
           CURRENT_DATE=$(date '+%Y-%m-%d')
           jq --arg date "$CURRENT_DATE" '.lastUpdate = $date' package.json > temp.json && mv temp.json package.json
+
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Commit and Push Changes
         run: |
           git add .gitattributes
