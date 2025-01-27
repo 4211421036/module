@@ -19,49 +19,49 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '16'
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
     
-    - name: Create necessary directories and initialize npm
-      run: |
-        mkdir -p saved_modules
-        npm init -y
-        
     - name: Install dependencies
       run: |
-        # Machine Learning Libraries
-        npm install @tensorflow/tfjs-node --save
+        # Initialize npm if package.json doesn't exist
+        if [ ! -f package.json ]; then
+          npm init -y
+        fi
         
-        # Frontend Frameworks
+        # Create directories
+        mkdir -p saved_modules
+        
+        # Install packages
+        npm install @tensorflow/tfjs-node --save
         npm install @angular/cli --save
         npm install @angular/core --save
-        npm install @angular/common --save
-        npm install @angular/router --save
-        
-        # Polymer
-        npm install polymer-cli --save
         npm install @polymer/polymer --save
-        npm install @webcomponents/webcomponentsjs --save
         
         # Copy to saved_modules
         rm -rf saved_modules/*
         cp -r node_modules/ saved_modules/
-        
-    - name: Generate package-lock.json
-      run: npm install
         
     - name: Update package.json timestamp
       run: |
         CURRENT_DATE=$(date '+%Y-%m-%d')
         jq --arg date "$CURRENT_DATE" '.lastUpdate = $date' package.json > temp.json && mv temp.json package.json
         
-    - name: Commit dan Push changes
+    - name: Configure Git
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        
+    - name: Commit Changes
+      run: |
         git add saved_modules/
         git add package.json
-        git add package-lock.json
+        git add package-lock.json || true
         git status
-        git commit -m "Update modules - $(date +'%Y-%m-%d')"
-        git push origin main
+        
+    - name: Create Commit
+      run: |
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Update modules - $(date +'%Y-%m-%d')"
+          git push origin main
+        fi
