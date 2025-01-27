@@ -34,8 +34,30 @@ jobs:
             npm init -y
           fi
 
+          # Buat folder utama
+          mkdir -p modules_storage
+
           # Install modules and create node_modules
           npm install @tensorflow/tfjs-node @angular/cli @polymer/polymer react react-dom @emotion/react @emotion/styled framer-motion shadcn/ui tailwindcss postcss autoprefixer @webcomponents/custom-elements lit lucide-react chart.js express cors helmet compression mongoose sequelize redis firebase-admin jsonwebtoken bcryptjs passport passport-jwt socket.io vite webpack babel esbuild eslint prettier jest react-testing-library supertest mocha axios graphql dotenv --save --legacy-peer-deps
+
+          # Script untuk otomatis copy module berdasarkan scope
+          echo "Copying modules automatically..."
+          for dir in node_modules/@*/ ; do
+            if [ -d "$dir" ]; then
+              scope=$(basename $dir)
+              echo "Processing @$scope..."
+              mkdir -p "modules_storage/$scope"
+              cp -r "$dir"* "modules_storage/$scope/"
+            fi
+          done
+          
+          # Copy module non-scoped jika ada
+          for dir in node_modules/[^@]*/ ; do
+            if [ -d "$dir" ]; then
+              module=$(basename $dir)
+              echo "Processing $module..."
+              mkdir -p "modules_storage/$module"
+              cp -r "$dir"* "modules_storage/$module/"
 
       - name: Copy node_modules to modules_storage
         run: |
