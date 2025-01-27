@@ -1,0 +1,89 @@
+name: Download dan Save Module
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Run setiap hari pada jam 00:00 UTC
+  push:
+    branches:
+      - main
+
+jobs:
+  Module:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+        cache: 'npm'
+    
+    - name: Create necessary directories
+      run: |
+        mkdir -p saved_modules
+        
+    - name: Install dependencies dan save module
+      run: |
+        # Buat package.json jika belum ada
+        if [ ! -f package.json ]; then
+          npm init -y
+        fi
+        
+        # Machine Learning Libraries
+        npm install @tensorflow/tfjs-node
+        
+        # Frontend Frameworks
+        npm install @angular/cli                  # Angular CLI
+        npm install @angular/core                 # Angular Core
+        npm install @angular/common               # Angular Common
+        npm install @angular/router               # Angular Router
+        
+        # Polymer
+        npm install polymer-cli                   # Polymer CLI
+        npm install @polymer/polymer              # Polymer Core
+        npm install @webcomponents/webcomponentsjs # Web Components polyfills
+        
+        # Vue.js
+        npm install vue
+        npm install @vue/cli
+        
+        # React
+        npm install react
+        npm install react-dom
+        npm install create-react-app
+        
+        # UI Libraries
+        npm install @material/material-components-web
+        npm install bootstrap
+        npm install tailwindcss
+        
+        # Utility Libraries
+        npm install lodash
+        npm install moment
+        npm install axios
+        
+        # Testing Libraries
+        npm install jest
+        npm install mocha
+        npm install cypress
+        
+        # Copy modules ke saved_modules
+        rm -rf saved_modules/*  # Bersihkan folder saved_modules
+        cp -r node_modules/ saved_modules/
+        
+    - name: Update package.json
+      run: |
+        CURRENT_DATE=$(date '+%Y-%m-%d')
+        jq --arg date "$CURRENT_DATE" '.lastUpdate = $date' package.json > temp.json && mv temp.json package.json
+        
+    - name: Commit dan Push changes
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        git add saved_modules/
+        git add package.json
+        git commit -m "Update modules - ${{ github.event.head_commit.timestamp }}"
+        git push
