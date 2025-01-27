@@ -32,10 +32,11 @@ jobs:
           # Initialize npm if package.json doesn't exist
           if [ ! -f package.json ]; then
             npm init -y
+            npm cache clean --force
           fi
 
           # Install modules and ensure `node_modules` is created
-          npm install @tensorflow/tfjs-node @angular/cli @polymer/polymer react react-dom @emotion/react @emotion/styled framer-motion shadcn/ui tailwindcss postcss autoprefixer @webcomponents/custom-elements lit lucide-react chart.js express cors helmet compression mongoose sequelize redis firebase-admin jsonwebtoken bcryptjs passport passport-jwt socket.io vite webpack babel esbuild eslint prettier jest react-testing-library supertest mocha axios graphql dotenv --save
+          npm install dedupe @tensorflow/tfjs-node @angular/cli @polymer/polymer next@latest @vercel/analytics@latest next-contentlayer2@latest esbuild@0.23.1 react react-dom @emotion/react @emotion/styled framer-motion shadcn/ui tailwindcss postcss autoprefixer @webcomponents/custom-elements lit lucide-react chart.js express cors helmet compression mongoose sequelize redis firebase-admin jsonwebtoken bcryptjs passport passport-jwt socket.io vite webpack babel esbuild eslint prettier jest react-testing-library supertest mocha axios graphql dotenv --save --legacy-peer-deps
 
           # Create `modules_storage` directory
           mkdir -p modules_storage
@@ -73,6 +74,7 @@ jobs:
           git add .gitattributes
           git add modules_storage/
           git add package.json
+          rm -rf node_modules package-lock.json
           git add package-lock.json
           git commit -m "Update modules - $(date +'%Y-%m-%d')" || true
           git push origin main || true
