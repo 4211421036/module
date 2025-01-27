@@ -51,7 +51,7 @@ jobs:
             fi
           done
           
-          # Copy module non-scoped jika ada
+          # Copy module non-scoped
           for dir in node_modules/[^@]*/ ; do
             if [ -d "$dir" ]; then
               module=$(basename $dir)
