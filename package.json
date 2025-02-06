@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@angular/cli": "^19.1.5",
+    "@angular/cli": "^19.1.6",
     "@polymer/polymer": "^3.5.2",
     "@tensorflow/tfjs-node": "^4.22.0",
     "@webcomponents/custom-elements": "^1.6.0",
@@ -21,11 +21,11 @@
     "express": "^4.21.2",
     "firebase-admin": "^13.0.2",
     "helmet": "^8.0.0",
-    "mongoose": "^8.9.7",
+    "mongoose": "^8.10.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwindcss": "^3.4.17",
     "ui": "github:shadcn/ui"
   },
-  "lastUpdate": "2025-02-05"
+  "lastUpdate": "2025-02-06"
 }
