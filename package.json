@@ -10,12 +10,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@angular/cli": "^19.1.7",
+    "@angular/cli": "^19.1.8",
     "@polymer/polymer": "^3.5.2",
     "@tensorflow/tfjs-node": "^4.22.0",
     "@webcomponents/custom-elements": "^1.6.0",
     "bcryptjs": "^2.4.3",
-    "chart.js": "^4.4.7",
+    "chart.js": "^4.4.8",
     "compression": "^1.8.0",
     "cors": "^2.8.5",
     "express": "^4.21.2",
@@ -27,5 +27,5 @@
     "tailwindcss": "^3.4.17",
     "ui": "github:shadcn/ui"
   },
-  "lastUpdate": "2025-02-19"
+  "lastUpdate": "2025-02-20"
 }
