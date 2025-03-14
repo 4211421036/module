@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@angular/cli": "^19.2.2",
+    "@angular/cli": "^19.2.3",
     "@polymer/polymer": "^3.5.2",
     "@tensorflow/tfjs-node": "^4.22.0",
     "@webcomponents/custom-elements": "^1.6.0",
@@ -27,5 +27,5 @@
     "tailwindcss": "^3.4.17",
     "ui": "github:shadcn/ui"
   },
-  "lastUpdate": "2025-03-13"
+  "lastUpdate": "2025-03-14"
 }
